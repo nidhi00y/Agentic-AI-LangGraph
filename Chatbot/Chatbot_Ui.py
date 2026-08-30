@@ -21,10 +21,19 @@ if(user_input):
 
     thread_id = '1'
     config = {"configurable": {"thread_id": thread_id}}
-    Ai_response = workflow.invoke({"messages": [HumanMessage(content=user_input)]}, config=config)
-    response = Ai_response["messages"][-1].content
-
-    st.session_state['message_history'].append({'role':'assistant','content':response})
+    ##Ai_response = workflow.invoke({"messages": [HumanMessage(content=user_input)]}, config=config)
+    ##response = Ai_response["messages"][-1].content
+    
     with st.chat_message('assistant'):
-           st.text(response)
+           ai_message= st.write_stream(
+                message_chunk.content for message_chunk,metadata in workflow.stream(
+                     {'message':[HumanMessage(content=user_input)]},
+                     config = config,
+                     stream_mode = 'messages'
+                     
+                )
+           )
+
+    st.session_state['message_history'].append({'role':'assistant','content':ai_message})
+
 
