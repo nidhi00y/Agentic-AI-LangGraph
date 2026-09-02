@@ -74,7 +74,13 @@ if(user_input):
        st.text(user_input)
 
     thread_id = st.session_state['thread_id']
-    config = {"configurable": {"thread_id": thread_id}}
+
+    #for saving chats thread wise in langsmith
+    config = {"configurable": {"thread_id": thread_id},
+              'metadata':{
+                   'thread_id':st.session_state['thread_id'],
+              },
+              'run_name':'chat_turn'}
     ##Ai_response = workflow.invoke({"messages": [HumanMessage(content=user_input)]}, config=config)
     ##response = Ai_response["messages"][-1].content
     
