@@ -1,6 +1,6 @@
 import streamlit as st
 from Backend import workflow,count_threads
-from langchain_core.messages import BaseMessage, HumanMessage
+from langchain_core.messages import BaseMessage, HumanMessage,AIMessage
 import uuid #for genarting dynamic thread_ids
 
 
@@ -85,14 +85,16 @@ if(user_input):
     ##response = Ai_response["messages"][-1].content
     
     with st.chat_message('assistant'):
-           ai_message= st.write_stream(
-                message_chunk.content for message_chunk,metadata in workflow.stream(
-                     {'message':[HumanMessage(content=user_input)]},
-                     config = config,
-                     stream_mode = 'messages'
-                     
-                )
-           )
+          def ai_only_stream():
+               for message_chunk,metadata in workflow.stream(
+                    {'message':[HumanMessage(content=user_input)]},
+                         config = config,
+                         stream_mode = 'messages'):
+               
+                    if isinstance(message_chunk, AIMessage):
+                         yield message_chunk.content
+
+          ai_message = st.write_stream(ai_only_stream)
 
     st.session_state['message_history'].append({'role':'assistant','content':ai_message})
 

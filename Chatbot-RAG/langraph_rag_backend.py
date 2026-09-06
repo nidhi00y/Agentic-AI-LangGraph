@@ -25,6 +25,7 @@ load_dotenv()
 # 1. LLM + embeddings
 # -------------------
 llm = ChatOpenAI(model="gpt-4o-mini")
+
 embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
 # -------------------
